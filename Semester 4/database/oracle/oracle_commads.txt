@@ -1,0 +1,163 @@
+create table NEWSPAPER (
+ Feature      VARCHAR2(15) not null,
+ Section      CHAR(1),
+ Page         NUMBER
+ );
+
+SELECT * FROM newspaper;
+describe NEWSPAPER;
+set feedback off;
+set feedback 25;
+show numwidth;
+numwidth 9;
+FEEDBACK ON for 25 or more rows
+
+
+SELECT * FROM newspaper
+     WHERE section = 'F';
+
+SELECT * FROM newspaper
+     WHERE section = 'F
+     order by Feature;
+
+select Feature, Section, Page from NEWSPAPER
+     where Section = 'F'
+     order by Page desc, Feature;
+
+select Feature, Section, Page
+     from NEWSPAPER
+     where Page = 6;
+
+SELECT * FROM newspaper
+     WHERE page > 7;
+
+SELECT * FROM newspaper
+     WHERE page <> 1;
+
+SELECT * FROM newspaper
+     WHERE feature LIKE '%o%o%';
+
+SELECT * FROM newspaper
+     WHERE feature LIKE '__i%';
+
+-----------------------------------------------
+
+SELECT * FROM comfort;
+
+SELCT * FROM comfort
+      WHERE precipitation IS NULL;
+
+SELECT * FROM comfort
+      WHERE precipitation IS NOT NULL;
+
+------------------------------------------------
+SELECT * EROM newspaper
+      WHERE section IN ('A','B','D');
+
+SELECT * FROM newspaper
+      WHERE section NOT IN ('A','B','D');
+
+SELECT * FROM newspaper
+      WHERE page BETWEEN 7 AND 10;
+
+select * from NEWSPAPER
+      where Page > 2
+      and ( Section = 'A' or Section = 'B' );
+------------------------------------------------
+Date : 14.01.2025
+
+SELECT section FROM newspaper
+      WHERE feature = 'Doctor Is In';
+
+SELECT feature FROM newspaper
+      WHERE section = (SELECT section FROM newspaper
+                       WHERE feature = 'Doctor Is In');
+
+SELECT * FROM newspaper
+       WHERE section < (SELECT section FROM newspaper 
+                        WHERE feature = 'Doctor Is In');
+
+SELECT section FROM newspaper
+      WHERE section = 'F';
+--------------------------------------------------
+Date : 16.01.25
+
+[Lists of Values from a Subquery]
+
+ SELECT * FROM newspaper
+        WHERE feature IN ('Doctor Is In','Movies');
+
+SELECT city, country FROM location
+       WHERE city IN ('PARIS','SPARTA');
+
+SELECT city,country FROM location
+        WHERE city IN(SELECT city FROM weather
+                      WHERE condition = 'CLOUDY');
+
+## This is much more than you need, and it doesn’t have any weather information. Yet these two
+ tables, WEATHER and LOCATION, have a column in common: City. You can therefore put the
+ information from the two tables together by joining them. You merely use the where clause to tell
+ Oracle what the two tables have in common:
+
+
+SELECT weather.city,condition,temperature,longitude,eastwest,latitude,northsouth
+           FROM weather, location
+           WHERE weather.city = location.city;
+------------------------------------------------------------
+
+##### Creating a View  #######
+
+ VIEW : A view provides a way of hiding
+ the logic that created the joined table just displayed
+
+    CREATE VIEW invasion AS
+    SELECT weather.city,condition,temperature,longitude,eastwest,latitude,northsouth
+           FROM weather, location
+           WHERE weather.city = location.city;
+-----------------------------------------------------------------
+DATE : 20.01.2025
+
+##Creating a User##
+
+ create user Dora identified by avocado;
+ alter user Dora identified by psyche;
+ connect dora/psyche;
+ password; ## for password change
+
+ create profile LIMITED_PROFILE limit
+ FAILED_LOGIN_ATTEMPTS 3;
+
+connect system/2102056;
+
+create user JANE identified by EYRE
+ profile LIMITED_PROFILE;
+
+grant CREATE SESSION to JANE;
+connect jane/eyre;
+
+
+AFTER TIMES wrong PASS it will lock....
+
+## FOR UNILOCK ##
+
+connect system/2102056;
+alter user JANE account unlock;
+
+
+connect system/2102056;
+
+ alter profile LIMITED_PROFILE limit
+ PASSWORD_LIFE_TIME 30;
+ 
+
+## FOR LOCK ##
+
+---For lock Profile ----
+First we should go to the system
+
+connect system/2102056;
+alter user JANE account lock;
+
+
+
+
