@@ -157,7 +157,19 @@ First we should go to the system
 
 connect system/2102056;
 alter user JANE account lock;
+------------------------------------------------------------
+DATE : 22.01.2025
 
+ CREATE PROFILE combine LIMIT
+       PASSWORD_LIFE_TIME 10
+       PASSWORD_GRACE_TIME 8
+       PASSWORD_REUSE_MAX 2
+       PASSWORD_LOCK_TIME 1
+       FAILED_LOGIN_ATTEMPTS 2
+       PASSWORD_REUSE_TIME 10;
+
+CREATE USER janecombined IDENTIFIED BY eyre
+       PROFILE combine;
 
 
 
