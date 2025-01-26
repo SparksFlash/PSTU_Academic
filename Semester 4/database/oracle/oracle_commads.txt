@@ -174,5 +174,6 @@ CREATE USER janecombined IDENTIFIED BY eyre
 ------------------------------------------------------------
 DATE : 26.01.25
 
-
-
+ALTER profile LIMITED_PROFILE 
+   PASSWORD_REUSE_MAX 2;
+   PASSWORD_REUSE_TIME UNLIMITED;
