@@ -1,0 +1,165 @@
+1.	Create a user named Person2, give password 1234, give privilege CREATE SESSION to Person2; Create another user named Person1, give password 5678, give privilege CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM to Person1; create a table named NEWSPAPER under user Person1, insert data into NEWSPAPER table as user Person1, give privileges SELECT, insert ON NEWSPAPER table TO Person2 from user Person1; Show NEWSPAPER table and insert data into NEWSPAPER table from user Person2. 
+
+
+
+SQL> CREATE USER Person2 IDENTIFIED BY abcd;
+
+User created.
+
+SQL> GRANT CREATE SESSION TO Person2;
+
+Grant succeeded.
+
+
+
+SQL> CREATE USER Person1 IDENTIFIED BY efgh;
+
+User created.
+
+SQL> GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM TO Person1;
+
+Grant succeeded.
+
+
+SQL> CONNECT Person1/efgh;
+Connected.
+
+
+SQL> CREATE TABLE NEWSPAPER (
+        ID NUMBER PRIMARY KEY,
+        NAME VARCHAR2(100),
+        PRICE NUMBER(5,2)
+    );
+
+Table created.
+
+
+
+SQL> connect system/2102056;
+Connected.
+
+
+
+SQL> ALTER USER Person1 QUOTA UNLIMITED ON USERS;
+
+User altered.
+
+SQL> ALTER USER Person2 QUOTA UNLIMITED ON USERS;
+
+User altered.
+
+
+
+
+SQL> CONNECT Person1/efgh;
+Connected.
+
+
+
+
+
+SQL> INSERT INTO NEWSPAPER(ID, NAME, PRICE) VALUES (1, 'Daily News', 10.50);
+
+1 row created.
+
+SQL> INSERT INTO NEWSPAPER(ID, NAME, PRICE) VALUES (2, 'Morning Times', 12.00);
+
+1 row created.
+
+SQL> INSERT INTO NEWSPAPER(ID, NAME, PRICE) VALUES (3, 'Evening Star', 15.75);
+
+1 row created.
+
+
+
+
+SQL> GRANT SELECT, INSERT ON Person1.NEWSPAPER TO Person2;
+
+Grant succeeded.
+
+
+SQL> CONNECT Person2/abcd;
+Connected.
+
+
+SQL> SELECT * FROM Person1.NEWSPAPER;
+
+        ID
+----------
+NAME
+--------------------------------------------------------------------------------
+     PRICE
+----------
+         1
+Daily News
+      10.5
+
+         2
+Morning Times
+        12
+
+        ID
+----------
+NAME
+--------------------------------------------------------------------------------
+     PRICE
+----------
+
+         3
+Evening Star
+     15.75
+
+
+
+
+SQL> INSERT INTO Person1.NEWSPAPER (ID, NAME, PRICE) VALUES (4, 'Weekly Journal', 20.00);
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+
+
+SELECT * FROM Person1.NEWSPAPER; 
+
+
+
+SQL> SELECT * FROM Person1.NEWSPAPER;
+
+        ID
+----------
+NAME
+--------------------------------------------------------------------------------
+     PRICE
+----------
+         1
+Daily News
+      10.5
+
+         2
+Morning Times
+        12
+
+        ID
+----------
+NAME
+--------------------------------------------------------------------------------
+     PRICE
+----------
+
+         3
+Evening Star
+     15.75
+
+         4
+Weekly Journal
+
+        ID
+----------
+NAME
+--------------------------------------------------------------------------------
+     PRICE
+----------
+        20
