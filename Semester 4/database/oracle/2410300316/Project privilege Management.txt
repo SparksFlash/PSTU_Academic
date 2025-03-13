@@ -1,6 +1,6 @@
 1.	Create a user named Person2, give password 1234, give privilege CREATE SESSION to Person2; Create another user named Person1, give password 5678, give privilege CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SYNONYM to Person1; create a table named NEWSPAPER under user Person1, insert data into NEWSPAPER table as user Person1, give privileges SELECT, insert ON NEWSPAPER table TO Person2 from user Person1; Show NEWSPAPER table and insert data into NEWSPAPER table from user Person2. 
 
-
+// MID EXAM
 
 SQL> CREATE USER Person2 IDENTIFIED BY abcd;
 
@@ -163,3 +163,28 @@ NAME
      PRICE
 ----------
         20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        SELECT DISTINCT department.dept_name
+FROM department
+WHERE department.budget > (SELECT department.budget
+                FROM department
+                WHERE department.dept_name = 'Astronomy');
+
+
