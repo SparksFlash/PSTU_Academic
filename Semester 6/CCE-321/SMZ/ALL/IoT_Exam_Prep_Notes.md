@@ -943,3 +943,123 @@ Near Field Communication (NFC), Camera, Proximity Sensor, Pedometer, Magnetomete
 - David Hanes et al., *IoT Fundamentals: Networking Technologies, Protocols, and Use Cases for the Internet of Things*, 1st Ed, 2018, Pearson India. (PDF6, PDF8, PDF9)
 - Granjal et al., "Security for the Internet of Things: A Survey of Existing Protocols and Open Research Issues", IEEE Communications Surveys & Tutorials, vol. 17, no. 3, 2015. (PDF7)
 - Sikder et al. survey (2021) — referenced across multiple lectures for 4-layer IoT architecture.
+
+---
+---
+
+## 📓 PDF 10: 8085 Microprocessor — Timing Diagram
+
+### What is a Timing Diagram?
+- A **graphical representation** of the **execution time of each instruction** of the 8085 microprocessor.
+
+### Key Terms (MEMORIZE definitions — high FITB/T-F value)
+- **Clock Signal**: time required to execute an instruction = **clock cycle**.
+- **Machine Cycle**: time required to access memory or I/O devices. 8085 has **5 basic machine cycles**: load opcode, read from memory, write to memory, read I/O, write I/O.
+- **T-State**: the portion of an operation performed in **one system clock period**.
+- **Control Signals**: control the operations — common ones: **ALE** (Address Latch Enable — note: NOT "address block enable" despite the slide wording), **RD** (read), **WR** (write), **IO/M** (I/O vs memory select).
+
+### 5 Basic Machine Cycles of 8085 (MEMORIZE T-STATES — very high exam value)
+| Machine Cycle | T-States |
+|---|---|
+| **Opcode Fetch** | **4T** |
+| **Memory Read** | **3T** |
+| **Memory Write** | **3T** |
+| **I/O Read** | **3T** |
+| **I/O Write** | **3T** |
+
+- Opcode Fetch is the ONLY cycle with 4 T-states; all others are 3T.
+
+### Opcode Fetch Machine Cycle
+- Each instruction has a **1-byte opcode**, stored in memory.
+- Every instruction **begins** with an opcode fetch machine cycle.
+- Takes **4T** total: first **3 T-states** used to load opcode from memory; remaining T-state(s) used for **internal operations** (internal decoding).
+- Signal sequence (T1–T4): T1 = higher order memory address on A15-A8, ALE pulses high, lower order memory address + opcode retrieval begins on AD7-AD0; T2 = IO/M=0, opcode read; T3 = S1=1,S0=1, data (D7-D0) read; T4 = address bus unspecified (internal operation, no memory access).
+
+### Memory Read Machine Cycle
+- Executed to **read a data byte from memory**.
+- Takes **3T states**.
+- Multi-byte instructions use **machine cycle after machine cycle** to load all opcodes/data.
+- Signal pattern: IO/M=1, S1=1, S0=0 during T2/T3 (control signal state differs from opcode fetch).
+
+### Memory Write Machine Cycle
+- Executed to **write a data byte to memory**.
+- Takes **3T states**.
+- Signal pattern: IO/M=0, S1=0, S0=1; uses **WR** (write) control signal instead of RD.
+
+### I/O Read Machine Cycle
+- Reads a data byte from an **I/O port or peripheral** (I/O-mapped).
+- Takes **3T states**.
+- Signal pattern: IO/M=1, S1=1, S0=0 (same S1/S0 as memory read, but IO/M=1 distinguishes I/O vs memory).
+
+### I/O Write Machine Cycle
+- Writes a data byte to an **I/O port or peripheral** (I/O-mapped).
+- Takes **3T states**.
+- Signal pattern: IO/M=1, S1=0, S0=1; uses **WR** signal.
+
+### Control Signal Summary Table (IO/M, S1, S0 — good matching/T-F question)
+| Machine Cycle | IO/M̄ | S1 | S0 |
+|---|---|---|---|
+| Opcode Fetch | 0 | 1 | 1 |
+| Memory Read | 0 (i.e., =0 for memory) / shown as IO/M=1,S1=1,S0=0 in some slides — memory ops have IO/M=0 for fetch, but plain memory read shown IO/M=1,S1=1,S0=0 in slide 8 (as per source diagram) | 1 | 0 |
+| Memory Write | 0 | 0 | 1 |
+| I/O Read | 1 | 1 | 0 |
+| I/O Write | 1 | 0 | 1 |
+
+*(Note: follow the exact diagrams from slides for exam — Opcode Fetch = IO/M=0,S1=1,S0=1; Memory Write = IO/M=0,S1=0,S0=1; I/O Read = IO/M=1,S1=1,S0=0; I/O Write = IO/M=1,S1=0,S0=1)*
+
+### Timing Diagram Examples (Instruction-level — IMPORTANT for numerical/descriptive questions)
+
+**1. MVI A, 45H** (Move Immediate — 2-byte instruction)
+- Uses **2 machine cycles**: 
+  1. **Opcode Fetch** (4T) — loads opcode **4EH** from memory address **2000H**
+  2. **Memory Read** (3T) — reads data **45H** from memory address **2001H**
+- Total = **4T + 3T = 7T states**
+
+**2. STA 8000H** (Store Accumulator — 3-byte instruction)
+- STA = **Store Accumulator**; stores content of accumulator to given memory address.
+- Opcode of STA = **32H**
+- Uses **4 machine cycles**:
+  1. **Opcode Fetch** (4T) — reads opcode 32H from address 1000H
+  2. **Memory Read** (3T) — reads low-order address byte (00H) from 1001H
+  3. **Memory Read** (3T) — reads high-order address byte (80H) from 1002H
+  4. **Memory Write** (3T) — combines address (8000H) and writes accumulator content (e.g. **C7H**) into memory location 8000H
+- Total = 4T + 3T + 3T + 3T = **13T states**
+
+**3. INR M** (Increment Memory content — example: at address C500H, opcode 34H)
+- Memory address example: **D050H**; opcodes shown: **E1H and E2H**
+- INR M involves: **Opcode Fetch** + **Memory Read** (read current content of memory location pointed by HL) + **Memory Write** (write back incremented value)
+- Demonstrates read-modify-write behavior for memory-based increment.
+
+### Applications of Timing Diagrams (list — likely T/F or short-answer)
+- Keeps track of all changes occurring in the system (system chart).
+- Provides accurate representation of physical activity (timelines).
+- Represents execution time of each instruction graphically.
+- **Timing Diagram is a special form of a sequence diagram.**
+- Important for **planning the clock frequency** of the microprocessor.
+- Helps design memory circuits that meet required **set and hold times** during read/write operations.
+- Helps engineers troubleshoot, design memory/device interactions, and optimize performance.
+- For students: simplifies learning by visually representing microprocessor's internal working.
+
+### Quick-Fire Facts — PDF10 (8085 Timing Diagram)
+
+| Fact | Answer |
+|---|---|
+| Number of basic machine cycles in 8085 | 5 |
+| T-states for Opcode Fetch | 4T |
+| T-states for Memory Read | 3T |
+| T-states for Memory Write | 3T |
+| T-states for I/O Read | 3T |
+| T-states for I/O Write | 3T |
+| ALE stands for | Address Latch Enable |
+| RD signal means | Read |
+| WR signal means | Write |
+| IO/M̄ signal indicates | Whether operation is I/O or Memory related |
+| A machine cycle & instruction cycle take how many clock periods | Several |
+| Portion of operation in one clock period is called | T-state |
+| Opcode size in 8085 | 1 byte |
+| MVI A,45H total T-states | 7T (4T Opcode Fetch + 3T Memory Read) |
+| STA instruction opcode | 32H |
+| STA stands for | Store Accumulator |
+| STA 8000H total machine cycles | 4 (1 Opcode Fetch + 2 Memory Read + 1 Memory Write) |
+| Timing Diagram is a special form of | Sequence Diagram |
+| Timing diagrams help plan | Clock frequency of the microprocessor |
